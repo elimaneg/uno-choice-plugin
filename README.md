@@ -1,7 +1,7 @@
 uno-choice-plugin
 =================
 
-A Jenkins **UI plugin for selecting one or multiple options for a job parameter**. It provides a number of capabilities in a single plugin some, but not all, of can be found amongst several other plugins. 
+A Jenkins **UI plugin for selecting one or multiple options for a job parameter**. It provides a number of capabilities in a single plugin some, but not all, of which can be found amongst several other plugins. 
 
 As of July 2014 the plugin supports:
 
