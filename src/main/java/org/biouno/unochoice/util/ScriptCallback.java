@@ -21,41 +21,56 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package org.biouno.unochoice;
 
-import groovy.lang.GroovyShell;
+package org.biouno.unochoice.util;
+
 import hudson.remoting.Callable;
 
 import java.util.Map;
-import java.util.Map.Entry;
 
-import org.codehaus.groovy.control.CompilerConfiguration;
+import org.biouno.unochoice.model.Script;
+import org.jenkinsci.remoting.RoleChecker;
 
 /**
  * A callable (Jenkins remoting API) object that executes the script locally (when executed in the master)
  * or remotely. 
+ * 
+ * @author dynamic-parameter-plugin
+ * @author Bruno P. Kinoshita
  */
-public class ScriptCallback implements Callable<Object, Throwable> {
-
+public class ScriptCallback<T extends Throwable> implements Callable<Object, T> {
+	
 	private static final long serialVersionUID = 4524316203276099968L;
 	
-	private final String script;
+	private final String name;
+	private final Script script;
 	private Map<String, String> parameters;
 
-	public ScriptCallback(String script, Map<String, String> parameters) {
+	public ScriptCallback(String name, Script script, Map<String, String> parameters) {
+		this.name = name;
 		this.script = script;
 		this.parameters = parameters;
 	}
 	
-	public Object call() throws Throwable {
-		CompilerConfiguration config = new CompilerConfiguration();
-		// TODO: we can add class paths here
-		GroovyShell shell = new GroovyShell(config);
-		for (Entry<String, String> parameter : parameters.entrySet()) {
-			shell.setVariable(parameter.getKey(), parameter.getValue());
-		}
-		Object eval = shell.evaluate(script);
+	public String getName() {
+		return name;
+	}
+	
+	public Map<String, String> getParameters() {
+		return parameters;
+	}
+	
+	public Script getScript() {
+		return script;
+	}
+	
+	public Object call() throws T {
+		final Object eval = script.eval(getParameters());
 		return eval;
+	}
+
+	public void checkRoles(RoleChecker roleChecker) throws SecurityException {
+		// FIXME: wut?
 	}
 	
 }
